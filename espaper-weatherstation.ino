@@ -29,6 +29,7 @@ See more at https://blog.squix.org
    Important: see settings.h to configure your settings!!!
  * ***************************/
 #include "settings.h"
+#include "sensitive.h"
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -100,6 +101,7 @@ void drawForecast();
 void drawTempChart();
 void drawForecastDetail(uint16_t x, uint16_t y, uint8_t dayIndex);
 void drawAstronomy();
+void sleepPreemptivelyAccordingToTime();
 
 
 void drawBattery();
@@ -118,14 +120,8 @@ bool canBtnPress;
 
 boolean connectWifi() {
   if (WiFi.status() == WL_CONNECTED) return true;
-  //Manual Wifi
-  Serial.print("[");
-  Serial.print(WIFI_SSID.c_str());
-  Serial.print("]");
-  Serial.print("[");
-  Serial.print(WIFI_PASS.c_str());
-  Serial.print("]");
   WiFi.begin(WIFI_SSID.c_str(), WIFI_PASS.c_str());
+  
   int i = 0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -140,8 +136,9 @@ boolean connectWifi() {
 }
 
 void setup() {
+  sleepPreemptivelyAccordingToTime();
+  
   Serial.begin(115200);
-  Serial.println("Woke up");
   pinMode(USR_BTN, INPUT_PULLUP);
   int btnState = digitalRead(USR_BTN);
 
@@ -149,17 +146,6 @@ void setup() {
   gfx.setRotation(1);
   gfx.setFastRefresh(false);
   
-  // load config if it exists. Otherwise use defaults.
-  boolean mounted = SPIFFS.begin();
-  if (!mounted) {
-    Serial.println("FS not formatted. Doing that now");
-    SPIFFS.format();
-    Serial.println("FS formatted...");
-    SPIFFS.begin();
-  }
-  loadConfig();
-
-  Serial.println("State: " + String(btnState));
   if (btnState == LOW) {
     boolean connected = connectWifi();
     startConfigPortal(&gfx);
@@ -184,7 +170,6 @@ void setup() {
       gfx.drawString(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 30, "Could not connect to WiFi\nPress LEFT + RIGHT button\nto enter config mode");
       gfx.commit();
     }
-    Serial.println("Going to sleep");
     ESP.deepSleep(UPDATE_INTERVAL_SECS * 1000000);
   }
 }
@@ -195,6 +180,15 @@ void loop() {
 
 }
 
+void sleepPreemptivelyAccordingToTime() {
+  char *dstAbbrev;
+  time_t now = dstAdjusted.time(&dstAbbrev);
+  struct tm * timeinfo = localtime (&now);
+
+  if(timeinfo->tm_hour < 6){
+    ESP.deepSleep(4294967295);
+  }
+}
 // Update the internet based information and update screen
 void updateData() {
   configTime(UTC_OFFSET * 3600, 0, NTP_SERVERS);

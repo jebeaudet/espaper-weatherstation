@@ -28,10 +28,8 @@ See more at http://blog.squix.ch
 const String CONFIG_SSID = "ESPaperConfig";
 
 // Setup
-String WIFI_SSID = "";
-String WIFI_PASS = "";
 
-const int UPDATE_INTERVAL_SECS = 20 * 60; // Update every 20 minutes
+const int UPDATE_INTERVAL_SECS = 30 * 60; // Update every 20 minutes
 
 /*
  * BUSY---->gpio4
@@ -75,10 +73,6 @@ const int UPDATE_INTERVAL_SECS = 20 * 60; // Update every 20 minutes
 // If you want to have control over the exact weather station ("observation location") that WU uses you need to replace
 // the city with "pws:STATION_ID". So, for the Aquatic Park in San Francisco you'd use "pws:KCASANFR359".
 // Alternative query options are documented at https://www.wunderground.com/weather/api/d/docs?d=data/index&MR=1#standard_request_url_format
-
-String DISPLAYED_CITY_NAME = "";
-String OPEN_WEATHER_MAP_APP_ID = "";
-String OPEN_WEATHER_MAP_LOCATION = "";
 /*
 Arabic - ar, Bulgarian - bg, Catalan - ca, Czech - cz, German - de, Greek - el,
 English - en, Persian (Farsi) - fa, Finnish - fi, French - fr, Galician - gl,
@@ -88,19 +82,19 @@ Portuguese - pt, Romanian - ro, Russian - ru, Swedish - se, Slovak - sk,
 Slovenian - sl, Spanish - es, Turkish - tr, Ukrainian - ua, Vietnamese - vi,
 Chinese Simplified - zh_cn, Chinese Traditional - zh_tw.
 */
-String OPEN_WEATHER_MAP_LANGUAGE = "";
+String OPEN_WEATHER_MAP_LANGUAGE = "en";
 
 const String MOON_PHASES[] = {"New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous",
                               "Full Moon", "Waning Gibbous", "Third quarter", "Waning Crescent"};
 
-#define UTC_OFFSET + 1
-struct dstRule StartRule = {"CEST", Last, Sun, Mar, 2, 3600}; // Central European Summer Time = UTC/GMT +2 hours
-struct dstRule EndRule = {"CET", Last, Sun, Oct, 2, 0};       // Central European Time = UTC/GMT +1 hour
+// #define UTC_OFFSET + 1
+// struct dstRule StartRule = {"CEST", Last, Sun, Mar, 2, 3600}; // Central European Summer Time = UTC/GMT +2 hours
+// struct dstRule EndRule = {"CET", Last, Sun, Oct, 2, 0};       // Central European Time = UTC/GMT +1 hour
 
 // Settings for Boston
-// #define UTC_OFFSET -5
-// struct dstRule StartRule = {"EDT", Second, Sun, Mar, 2, 3600}; // Eastern Daylight time = UTC/GMT -4 hours
-// struct dstRule EndRule = {"EST", First, Sun, Nov, 1, 0};       // Eastern Standard time = UTC/GMT -5 hour
+#define UTC_OFFSET -5
+struct dstRule StartRule = {"EDT", Second, Sun, Mar, 2, 3600}; // Eastern Daylight time = UTC/GMT -4 hours
+struct dstRule EndRule = {"EST", First, Sun, Nov, 1, 0};       // Eastern Standard time = UTC/GMT -5 hour
 
 // values in metric or imperial system?
 bool IS_METRIC = true;
@@ -109,8 +103,7 @@ bool IS_METRIC = true;
 bool IS_STYLE_12HR = false;
 
 // change for different ntp (time servers)
-#define NTP_SERVERS "0.ch.pool.ntp.org", "1.ch.pool.ntp.org", "2.ch.pool.ntp.org"
-// #define NTP_SERVERS "us.pool.ntp.org", "time.nist.gov", "pool.ntp.org"
+#define NTP_SERVERS "us.pool.ntp.org", "time.nist.gov", "pool.ntp.org"
 
 
 
